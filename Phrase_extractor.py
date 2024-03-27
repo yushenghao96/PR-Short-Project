@@ -1,15 +1,20 @@
 # importing required modules
 from pypdf import PdfReader
-import pandas as pd
-
+import os
+import re
 
 ## Config
 # directories and file name
-file_directory = 'E:/Mega/Master/2023- 2024 2ro/Pattern recognition/'
-file_name = 'J.R.R. Tolkien La Comunidad del anillo I.pdf' # file to extract text
+file_directory = 'C:/MUAR - 2/Reconeixement de formes i Machine Learning/NL/'
+books_folder = 'Books/'
+extractedText_folder = 'ExtractedText/'
 
-extracted_text_file = 'extracted_text_file.txt' # file to save the text extracted
-extracted_csv_file = 'Extracted data.csv'
+books = {
+    'Spanish': 'J.R.R. Tolkien La Comunidad del anillo I.pdf',
+    'English': 'harry-potter-book-collection-1-4.pdf',
+    'German': 'karl-marx-das-kapital-buch-1.pdf',
+    'French': 'Verne-Voyage_au_centre_de_la_Terre.pdf',
+}
 
 # Text cleaning
 unwanted_charaters = ['\n', '-'] # analizar si quitar '-'
@@ -19,71 +24,59 @@ number_spaces = 3 # number of repeated spaces to delete in the text
 
 
 
+for book in books:
+    if not os.path.exists(file_directory + extractedText_folder + book + '.txt'):
+        #----------------------------------------------------------------------
+        #--------------------------text extraction-----------------------------
 
-#----------------------------------------------------------------------
-#--------------------------text extraction-----------------------------
+        # creating a pdf reader object
+        reader = PdfReader(file_directory + books_folder + books[book])
 
-# creating a pdf reader object
-reader = PdfReader(file_directory+file_name)
+        # printing number of pages in pdf file
+        pages = len(reader.pages)
+        print(pages)
 
-# printing number of pages in pdf file
-pages = len(reader.pages)
-print(pages)
+        # Looping every page
+        i = 0
+        text = ''
+        while i < pages:
+            # getting a specific page from the pdf file
+            page_extract = reader.pages[i]
 
-# Looping every page
-i = 0
-text = ''
-while i < pages:
-    # getting a specific page from the pdf file
-    page_extract = reader.pages[i]
+            # extracting text from page
+            text_dummy = page_extract.extract_text()
 
-    # extracting text from page
-    text_dummy = page_extract.extract_text()
+            # cleaning the text from unwanted characters
+            for character in unwanted_charaters:
+                text_dummy = text_dummy.replace(character,'')
 
-    # cleaning the text from unwanted characters
-    for character in unwanted_charaters:
-        text_dummy = text_dummy.replace(character,'')
+            # Removing space after dot
+            text_dummy = text_dummy.replace('. ', '.')
 
-    # Removing space after dot
-    text_dummy = text_dummy.replace('. ', '.')
+            # Removing multiple space
+            j = 1
+            while j <= number_spaces:
+                text_dummy = text_dummy.replace('  ', ' ')
+                j += 1
 
-    # Removing multiple space
-    j = 1
-    while j <= number_spaces:
-        text_dummy = text_dummy.replace('  ', ' ')
-        j += 1
+            # append page
+            text = text + text_dummy
 
-    # append page
-    text = text + text_dummy
+            # iteration
+            i += 1
 
-    # iteration
-    i += 1
+        #----------------------------------------------------------------------
+        #--------------------------------TXT-----------------------------------
 
-# save in txt
-f = open(file_directory + extracted_text_file, "w", encoding="utf-8")
-f.write(text)
-f.close()
+        # init
+        f = open(file_directory + extractedText_folder + book + '.txt', "w", encoding="utf-8")
+        data_dict = {} # allocating dictionary to save csv
+        text_list = text.split('.')
+        for sentence in text_list:
+            if '.' not in sentence and '*' not in sentence and len(sentence) > 25:
+                if sentence.startswith(' '):
+                    sentence = sentence[1:]
+                sentence = re.sub(r'\d+', '', sentence)
+                f.write(sentence + "\n")
+        f.close()
 
-#----------------------------------------------------------------------
-#--------------------------------CSV-----------------------------------
-
-# init
-open(file_directory + extracted_csv_file, "w", encoding="utf-8").close() # clean csv
-data_dict = {} # allocating dictionary to save csv
-text_list = text.split('. ')
-
-# this section for constructing csv table
-#----------------------------------------------------------------------
-# Add main column and data, phrases
-data_dict['Phrase'] = text_list
-
-#
-
-#
-
-
-#----------------------------------------------------------------------
-
-# Create DataFrame and saving
-df = pd.DataFrame(data_dict)
-df.to_csv(file_directory + extracted_csv_file, sep=';', encoding='utf-8')
