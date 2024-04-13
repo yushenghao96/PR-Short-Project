@@ -1,10 +1,12 @@
 # importing required modules
 import numpy as np
+import pandas as pd
 
 ## Config
 # directories and file name
 file_directory = 'C:/MUAR - 2/Reconeixement de formes i Machine Learning/NL/'
 extractedText_folder = 'ExtractedText/'
+extractedFeatures_folder = 'ExtractedFeatures/'
 
 languages = [
     'Spanish',
@@ -45,6 +47,10 @@ for language in languages:
                           num_sch,
                           num_triple_vowels
                             ]
+        all_obs_feat_list.append(line_feat_list)
+
+    df = pd.DataFrame(all_obs_feat_list, columns = columnsTitles)
+    df.to_csv(file_directory + extractedFeatures_folder + language + '.csv', sep=';', encoding='utf-8')
 
 
 
