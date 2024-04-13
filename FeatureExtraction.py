@@ -5,6 +5,9 @@ import os
 
 
 ## Config
+#Create directory FeatureExtracted
+os.makedirs(file_directory + extractedFeatures_folder, exist_ok=True)
+
 # directories and file name
 extractedText_folder = 'ExtractedText/'
 extractedFeatures_folder = 'ExtractedFeatures/'
