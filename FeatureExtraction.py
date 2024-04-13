@@ -77,6 +77,29 @@ for language in languages:
             num_ssh = line.lower().count('ss')
             num_ix = line.lower().count('ix')
             num_ll = line.lower().count('ll')
+            num_oe = line.lower().count('œ')
+            num_a_accent4 = line.lower().count('à')
+            num_a_accent2 = line.lower().count('á')
+            num_a_hat = line.lower().count('â')
+            num_a_dotdot = line.lower().count('ä')
+            num_e_accent4 = line.lower().count('è')
+            num_e_accent2 = line.lower().count('á')
+            num_e_hat = line.lower().count('ê')
+            num_e_dotdot = line.lower().count('ë')
+            num_i_accent4 = line.lower().count('ì')
+            num_i_accent2 = line.lower().count('í')
+            num_i_hat = line.lower().count('î')
+            num_i_dotdot = line.lower().count('ï')
+            num_o_accent4 = line.lower().count('ò')
+            num_o_accent2 = line.lower().count('ó')
+            num_o_hat = line.lower().count('ô')
+            num_o_dotdot = line.lower().count('ö')
+            num_u_accent4 = line.lower().count('ù')
+            num_u_accent2 = line.lower().count('ú')
+            num_u_hat = line.lower().count('û')
+            num_u_dotdot = line.lower().count('ü')
+
+
             #repetir con dem�s conjuntos de letras
             num_vowels = num_a + num_e + num_i + num_o + num_u
             num_consonants = num_b + num_c
@@ -95,7 +118,3 @@ for language in languages:
 
         df = pd.DataFrame(all_obs_feat_list, columns = columnsTitles)
         df.to_csv(file_directory + extractedFeatures_folder + language + '.csv', sep=';', encoding='utf-8')
-
-
-
-
