@@ -5,9 +5,11 @@ import re
 
 ## Config
 # directories and file name
-file_directory = 'C:/MUAR - 2/Reconeixement de formes i Machine Learning/NL/'
 books_folder = 'Books/'
 extractedText_folder = 'ExtractedText/'
+script_name = 'Phrase_extractor.py'
+file_directory = __file__.replace(script_name,'')
+
 
 books = {
     'Spanish': 'J.R.R. Tolkien La Comunidad del anillo I.pdf',
@@ -17,7 +19,7 @@ books = {
 }
 
 # Text cleaning
-unwanted_charaters = ['\n', '-'] # analizar si quitar '-'
+unwanted_charaters = ['\n', '-', 'El Señor de los anillos: La Comunidad del anillo'] # analizar si quitar '-'
 number_spaces = 3 # number of repeated spaces to delete in the text
 
 # CSV parameters
