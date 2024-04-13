@@ -3,17 +3,16 @@ import numpy as np
 import pandas as pd
 import os
 
-
-## Config
-#Create directory FeatureExtracted
-os.makedirs(file_directory + extractedFeatures_folder, exist_ok=True)
-
 # directories and file name
 extractedText_folder = 'ExtractedText/'
 extractedFeatures_folder = 'ExtractedFeatures/'
 
 script_name = 'FeatureExtraction.py'
 file_directory = __file__.replace(script_name, '')
+
+## Config
+#Create directory FeatureExtracted
+os.makedirs(file_directory + extractedFeatures_folder, exist_ok=True)
 
 languages = [
     'Spanish',
@@ -22,9 +21,9 @@ languages = [
     'French'
 ]
 
-columnsTitles = ['num_a', 
-                 'num_sch',
-                 'num_3vowels'
+columnsTitles = ['num_a', 'num_b', 'num_c', 'num_ç', 'num_d', 'num_e', 'num_f', 'num_g', 'num_h', 'num_i', 'num_j', 'num_k', 'num_l', 'num_m', 'num_n', 'num_ñ', 'num_o', 'num_p', 'num_q', 'num_r', 'num_s', 'num_t', 'num_u', 'num_v', 'num_w', 'num_x', 'num_y', 'num_z', 
+                'num_sch', 'num_ch', 'num_sh', 'num_gn', 'num_esszett', 'num_ssh', 'num_ix', 'num_ll', 
+                'num_triple_vowels', 'num_consonants', 'num_triple_vowels', 'num_triple_consonants', 'num_capital'
                  ]
 
 def countTripleLetters(text, letters):
@@ -89,9 +88,9 @@ for language in languages:
 
 
 
-            line_feat_list = [num_a,
-                              num_sch,
-                              num_triple_vowels
+            line_feat_list = [num_a, num_b, num_c, num_ç, num_d, num_e, num_f, num_g, num_h, num_i, num_j, num_k, num_l, num_m, num_n, num_ñ, num_o, num_p, num_q, num_r, num_s, num_t, num_u, num_v, num_w, num_x, num_y, num_z, 
+                              num_sch, num_ch, num_sh, num_gn, num_esszett, num_ssh, num_ix, num_ll,
+                              num_triple_vowels, num_consonants, num_triple_vowels, num_triple_consonants, num_capital
                                 ]
             all_obs_feat_list.append(line_feat_list)
 
