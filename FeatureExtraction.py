@@ -9,9 +9,11 @@ CONSONANTS = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', '
 
 ## Config
 # directories and file name
-file_directory = 'C:/MUAR - 2/Reconeixement de formes i Machine Learning/NL/'
 extractedText_folder = 'ExtractedText/'
 extractedFeatures_folder = 'ExtractedFeatures/'
+
+script_name = 'Phrase_extractor.py'
+file_directory = __file__.replace(script_name, '')
 
 languages = [
     'Spanish',
