@@ -3,6 +3,11 @@ import numpy as np
 import pandas as pd
 import os
 
+
+VOWELS = {'a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'}
+CONSONANTS = {'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
+              'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'}
+
 ## Config
 # directories and file name
 file_directory = 'C:/MUAR - 2/Reconeixement de formes i Machine Learning/NL/'
@@ -29,6 +34,28 @@ def countTripleVowels(text):
             count += 1
     return count
 
+def count_letters(text, letters):
+    count = 0
+    for char in text:
+        if char in letters:
+            count += 1
+    return count
+
+def count_vowels(text):
+    return count_letters(text, VOWELS)
+
+def count_consonants(text):
+    return count_letters(text, CONSONANTS)
+
+def calculate_vowel_consonant_ratio(text):
+    vowel_count = count_vowels(text)
+    consonant_count = count_consonants(text)
+    if consonant_count == 0:
+        return "No consonants found. Cannot calculate ratio."
+    else:
+        return vowel_count / consonant_count
+
+
 for language in languages:
     if not os.path.exists(file_directory + extractedFeatures_folder + language + '.csv'):
         with open(file_directory + extractedText_folder + language + '.txt', 'r') as file:
@@ -37,46 +64,13 @@ for language in languages:
         all_obs_feat_list = []
         for line in lines:
 
-            num_a = line.lower().count('a')
-            num_b = line.lower().count('b')
-            num_c = line.lower().count('c')
-            num_ç = line.lower().count('ç')
-            num_d = line.lower().count('d')
-            num_e = line.lower().count('e')
-            num_f = line.lower().count('f')
-            num_g = line.lower().count('g')
-            num_h = line.lower().count('h')
-            num_i = line.lower().count('i')
-            num_j = line.lower().count('j')
-            num_k = line.lower().count('k')
-            num_l = line.lower().count('l')
-            num_m = line.lower().count('m')
-            num_n = line.lower().count('n')
-            num_ñ = line.lower().count('ñ')
-            num_o = line.lower().count('o')
-            num_p = line.lower().count('p')
-            num_q = line.lower().count('q')
-            num_r = line.lower().count('r')
-            num_s = line.lower().count('s')
-            num_t = line.lower().count('t')
-            num_u = line.lower().count('u')
-            num_v = line.lower().count('v')
-            num_w = line.lower().count('w')
-            num_x = line.lower().count('x')
-            num_y = line.lower().count('y')
-            num_z = line.lower().count('z')
-            num_sch = line.lower().count('sch')
-            num_ch = line.lower().count('ch')
-            num_sh = line.lower().count('sh')
-            num_gn = line.lower().count('gn')
-            num_sch = line.lower().count('ß')
-            num_sch = line.lower().count('ss')
-            num_sch = line.lower().count('ix')
-            num_sch = line.lower().count('ll')
-            #repetir con demás conjuntos de letras
-            num_triple_vowels = countTripleVowels(line)
-            #reptir con consonantes
-            #etc
+        num_a = line.count('a')
+        #repetir con demï¿½s letras
+        num_sch = line.count('sch')
+        #repetir con demï¿½s conjuntos de letras
+        num_triple_vowels = countTripleVowels(line)
+        #reptir con consonantes
+        #etc
 
             line_feat_list = [num_a,
                               num_sch,
