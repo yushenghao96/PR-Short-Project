@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import os
+import statistics
 
 # directories and file name
 extractedText_folder = 'ExtractedText/'
@@ -23,7 +24,8 @@ languages = [
 
 columnsTitles = ['num_a', 'num_b', 'num_c', 'num_ç', 'num_d', 'num_e', 'num_f', 'num_g', 'num_h', 'num_i', 'num_j', 'num_k', 'num_l', 'num_m', 'num_n', 'num_ñ', 'num_o', 'num_p', 'num_q', 'num_r', 'num_s', 'num_t', 'num_u', 'num_v', 'num_w', 'num_x', 'num_y', 'num_z', 
                 'num_sch', 'num_ch', 'num_sh', 'num_gn', 'num_esszett', 'num_ssh', 'num_ix', 'num_ll', 
-                'num_triple_vowels', 'num_consonants', 'num_triple_vowels', 'num_triple_consonants', 'num_capital'
+                'num_oe', 'num_à', 'num_á', 'num_â', 'num_ä', 'num_è', 'num_é', 'num_ê', 'num_ë', 'num_ì', 'num_í', 'num_î', 'num_ï', 'num_ò', 'num_ó', 'num_ô', 'num_ö', 'num_ù', 'num_ú', 'num_û', 'num_ü',
+                'num_triple_vowels', 'num_consonants', 'num_triple_vowels', 'num_triple_consonants', 'num_capital','max_length_word', 'mean_length_words',
                  ]
 
 def countTripleLetters(text, letters):
@@ -105,11 +107,13 @@ for language in languages:
             num_triple_vowels = countTripleLetters(line.lower(), 'aeiouàáâäéèêëìíîïòóôöùúûüœ')
             num_triple_consonants = countTripleLetters(line.lower(), 'bcdfghjklmnpqrstvwxyz')
             num_capital = len(list(filter(lambda char: char.isupper(), line)))
-            #max_length_word = max(filter(lambda))
+            max_length_word = max(map(len, line.split()))
+            mean_length_words = statistics.mean(map(len, line.split()))
 
             line_feat_list = [num_a, num_b, num_c, num_ç, num_d, num_e, num_f, num_g, num_h, num_i, num_j, num_k, num_l, num_m, num_n, num_ñ, num_o, num_p, num_q, num_r, num_s, num_t, num_u, num_v, num_w, num_x, num_y, num_z, 
                               num_sch, num_ch, num_sh, num_gn, num_esszett, num_ssh, num_ix, num_ll,
-                              num_triple_vowels, num_consonants, num_triple_vowels, num_triple_consonants, num_capital
+                              num_oe, num_à, num_á, num_â, num_ä, num_è, num_é, num_ê, num_ë, num_ì, num_í, num_î, num_ï, num_ò, num_ó, num_ô, num_ö, num_ù, num_ú, num_û, num_ü,
+                              num_triple_vowels, num_consonants, num_triple_vowels, num_triple_consonants, num_capital, max_length_word, mean_length_words,
                                 ]
             all_obs_feat_list.append(line_feat_list)
 
