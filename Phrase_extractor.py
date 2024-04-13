@@ -8,7 +8,7 @@ import re
 books_folder = 'Books/'
 extractedText_folder = 'ExtractedText/'
 script_name = 'Phrase_extractor.py'
-file_directory = __file__.replace(script_name,'')
+file_directory = __file__.replace(script_name, '')
 
 
 books = {
