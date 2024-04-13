@@ -123,8 +123,14 @@ for language in languages:
             for key in line_letter_counts.keys():
                 line_letter_counts[key] = 0
         
+        # Count vowels and consonants
+        total_vowel = sum(summatory_letter_counts[vowel] for vowel in vowels)
+        total_consonant = sum(summatory_letter_counts[letter] for letter in line_letter_counts) - total_vowel
 
-        entropy = shannon_entropy(vowel_count,consonat_count,summatory_letter_counts)
+        print(total_vowel)
+        print(total_consonant)
+        
+        entropy = shannon_entropy(total_vowel,total_consonant,summatory_letter_counts)
 
         #Print all values from dict
         print('Language:',language)
