@@ -84,6 +84,7 @@ for language in languages:
             num_triple_vowels = countTripleLetters(line.lower(), 'aeiou')
             num_triple_consonants = countTripleLetters(line.lower(), 'bcdfghjklmnpqrstvwxyz')
             num_capital = len(list(filter(lambda char: char.isupper(), line)))
+            max_length_word = max(filter(lambda))
 
 
 
