@@ -2,6 +2,8 @@
 import numpy as np
 import pandas as pd
 import os
+import math
+import shutil
 
 # directories and file name
 extractedText_folder = 'ExtractedText/'
@@ -12,6 +14,13 @@ file_directory = __file__.replace(script_name, '')
 
 ## Config
 #Create directory FeatureExtracted
+if os.path.exists(file_directory+extractedFeatures_folder):
+    # Remove the folder
+    shutil.rmtree(file_directory+extractedFeatures_folder)
+    print(f"The folder {file_directory+extractedFeatures_folder} has been successfully removed.")
+else:
+    print(f"The folder {file_directory+extractedFeatures_folder} does not exist.")
+
 os.makedirs(file_directory + extractedFeatures_folder, exist_ok=True)
 
 languages = [
@@ -22,8 +31,8 @@ languages = [
 ]
 
 columnsTitles = ['num_a', 'num_b', 'num_c', 'num_ç', 'num_d', 'num_e', 'num_f', 'num_g', 'num_h', 'num_i', 'num_j', 'num_k', 'num_l', 'num_m', 'num_n', 'num_ñ', 'num_o', 'num_p', 'num_q', 'num_r', 'num_s', 'num_t', 'num_u', 'num_v', 'num_w', 'num_x', 'num_y', 'num_z', 
-                'num_sch', 'num_ch', 'num_sh', 'num_gn', 'num_esszett', 'num_ssh', 'num_ix', 'num_ll', 
-                'num_triple_vowels', 'num_consonants', 'num_triple_vowels', 'num_triple_consonants', 'num_capital'
+                'num_sch', 'num_ch', 'num_sh', 'num_gn', 'num_esszett', 'num_ssh', 'num_ix', 'num_ll', 'num_œ', 'num_à', 'num_á', 'num_â', 'num_ä', 'num_è', 'num_é', 'num_ê', 'num_ë', 'num_ì', 'num_í', 'num_î', 'num_ï', 'num_ò', 'num_ó', 'num_ô', 'num_ö', 'num_ù', 'num_ú', 'num_û', 'num_ü',
+                 'num_consonants', 'num_vowels','num_triple_vowels','num_triple_consonants', 'num_capital'
                  ]
 
 def countTripleLetters(text, letters):
@@ -33,6 +42,21 @@ def countTripleLetters(text, letters):
             count += 1
     return count
 
+def shannon_entropy(num_vocals,num_consonants,summatory_letter_counts):
+
+    # Probability of each character
+    total_chars = num_vocals + num_consonants
+    # Accesss all items except 5 last ones
+    probabilities = {char: count / total_chars for letter, count in list(summatory_letter_counts.items())[:-5]}
+    
+    #Calculate entropy
+    entropy = 0 
+    for prob in probabilities.values():
+        if prob != 0:  # Check if probability is not zero
+            entropy -= prob * math.log2(prob)
+    
+    return entropy
+
 
 for language in languages:
     if not os.path.exists(file_directory + extractedFeatures_folder + language + '.csv'):
@@ -40,63 +64,69 @@ for language in languages:
             lines = file.readlines()
 
         all_obs_feat_list = []
+        summatory_letter_counts = {
+        'a': 0, 'b': 0, 'c': 0, 'ç': 0, 'd': 0, 'e': 0, 'f': 0, 'g': 0, 'h': 0, 'i': 0,
+        'j': 0, 'k': 0, 'l': 0, 'm': 0, 'n': 0, 'ñ': 0, 'o': 0, 'p': 0, 'q': 0, 'r': 0,
+        's': 0, 't': 0, 'u': 0, 'v': 0, 'w': 0, 'x': 0, 'y': 0, 'z': 0,
+        'sch': 0, 'ch': 0, 'sh': 0, 'gn': 0, 'ß': 0, 'ss': 0, 'ix': 0, 'll': 0, 'œ': 0,
+        'à': 0, 'á': 0, 'â': 0, 'ä': 0, 'è': 0, 'é': 0, 'ê': 0, 'ë': 0, 'ì': 0, 'í': 0,
+        'î': 0, 'ï': 0, 'ò': 0, 'ó': 0, 'ô': 0, 'ö': 0, 'ù': 0, 'ú': 0, 'û': 0, 'ü': 0
+        }
+        line_letter_counts = {
+        'a': 0, 'b': 0, 'c': 0, 'ç': 0, 'd': 0, 'e': 0, 'f': 0, 'g': 0, 'h': 0, 'i': 0,
+        'j': 0, 'k': 0, 'l': 0, 'm': 0, 'n': 0, 'ñ': 0, 'o': 0, 'p': 0, 'q': 0, 'r': 0,
+        's': 0, 't': 0, 'u': 0, 'v': 0, 'w': 0, 'x': 0, 'y': 0, 'z': 0,
+        'sch': 0, 'ch': 0, 'sh': 0, 'gn': 0, 'ß': 0, 'ss': 0, 'ix': 0, 'll': 0, 'œ': 0,
+        'à': 0, 'á': 0, 'â': 0, 'ä': 0, 'è': 0, 'é': 0, 'ê': 0, 'ë': 0, 'ì': 0, 'í': 0,
+        'î': 0, 'ï': 0, 'ò': 0, 'ó': 0, 'ô': 0, 'ö': 0, 'ù': 0, 'ú': 0, 'û': 0, 'ü': 0
+        }
+
+        vowels = {'a', 'e', 'i', 'o', 'u','à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ò', 'ó', 'ô', 'ö', 'ù', 'ú', 'û', 'ü'}
+        
         for line in lines:
 
-            num_a = line.lower().count('a')
-            num_b = line.lower().count('b')
-            num_c = line.lower().count('c')
-            num_ç = line.lower().count('ç')
-            num_d = line.lower().count('d')
-            num_e = line.lower().count('e')
-            num_f = line.lower().count('f')
-            num_g = line.lower().count('g')
-            num_h = line.lower().count('h')
-            num_i = line.lower().count('i')
-            num_j = line.lower().count('j')
-            num_k = line.lower().count('k')
-            num_l = line.lower().count('l')
-            num_m = line.lower().count('m')
-            num_n = line.lower().count('n')
-            num_ñ = line.lower().count('ñ')
-            num_o = line.lower().count('o')
-            num_p = line.lower().count('p')
-            num_q = line.lower().count('q')
-            num_r = line.lower().count('r')
-            num_s = line.lower().count('s')
-            num_t = line.lower().count('t')
-            num_u = line.lower().count('u')
-            num_v = line.lower().count('v')
-            num_w = line.lower().count('w')
-            num_x = line.lower().count('x')
-            num_y = line.lower().count('y')
-            num_z = line.lower().count('z')
-            num_sch = line.lower().count('sch')
-            num_ch = line.lower().count('ch')
-            num_sh = line.lower().count('sh')
-            num_gn = line.lower().count('gn')
-            num_esszett = line.lower().count('ß')
-            num_ssh = line.lower().count('ss')
-            num_ix = line.lower().count('ix')
-            num_ll = line.lower().count('ll')
+            # Lowercase each line 
+            line_lower = line.lower()
+            
+            # Iterate through each character 
+            for char in line_letter_counts:
+                num_char = line_lower.count(char)
+                line_letter_counts[char] += num_char
 
-            num_vowels = num_a + num_e + num_i + num_o + num_u
-            num_consonants = num_b + num_c + num_d + num_f + num_g + num_h + num_j + num_k + num_l + num_m + num_n + num_p + num_q + num_r + num_s + num_t + num_v + num_w + num_x + num_y + num_z
+            # Count vowels and consonants
+            vowel_count = sum(line_letter_counts[vowel] for vowel in vowels)
+            consonat_count = sum(line_letter_counts[letter] for letter in line_letter_counts) - vowel_count
+
             num_triple_vowels = countTripleLetters(line.lower(), 'aeiou')
             num_triple_consonants = countTripleLetters(line.lower(), 'bcdfghjklmnpqrstvwxyz')
             num_capital = len(list(filter(lambda char: char.isupper(), line)))
-
-
-
-
-            line_feat_list = [num_a, num_b, num_c, num_ç, num_d, num_e, num_f, num_g, num_h, num_i, num_j, num_k, num_l, num_m, num_n, num_ñ, num_o, num_p, num_q, num_r, num_s, num_t, num_u, num_v, num_w, num_x, num_y, num_z, 
-                              num_sch, num_ch, num_sh, num_gn, num_esszett, num_ssh, num_ix, num_ll,
-                              num_triple_vowels, num_consonants, num_triple_vowels, num_triple_consonants, num_capital
-                                ]
+        
+           #Creation of array with column values
+            line_feat_list = [value for value in line_letter_counts.values()]
+            line_feat_list.append(vowel_count)
+            line_feat_list.append(consonat_count)
+            line_feat_list.append(num_triple_vowels)
+            line_feat_list.append(num_triple_consonants)
+            line_feat_list.append(num_capital)
             all_obs_feat_list.append(line_feat_list)
+            
+            #Sum the values of line dict to summatory dict           
+            for key in line_letter_counts.keys():
+                summatory_letter_counts[key] += line_letter_counts[key]
+            
+            #Reset values of line dict
+            for key in line_letter_counts.keys():
+                line_letter_counts[key] = 0
+        
+
+        entropy = shannon_entropy(vowel_count,consonat_count,summatory_letter_counts)
+
+        #Print all values from dict
+        print('Language:',language)
+        print('Entropy language ' + language + ': '+ str(entropy))
+        print(summatory_letter_counts.items())
+
 
         df = pd.DataFrame(all_obs_feat_list, columns = columnsTitles)
         df.to_csv(file_directory + extractedFeatures_folder + language + '.csv', sep=';', encoding='utf-8')
-
-
-
 
