@@ -3,14 +3,16 @@ import numpy as np
 import pandas as pd
 import os
 
-
-## Config
 # directories and file name
 extractedText_folder = 'ExtractedText/'
 extractedFeatures_folder = 'ExtractedFeatures/'
 
 script_name = 'FeatureExtraction.py'
 file_directory = __file__.replace(script_name, '')
+
+## Config
+#Create directory FeatureExtracted
+os.makedirs(file_directory + extractedFeatures_folder, exist_ok=True)
 
 languages = [
     'Spanish',
@@ -19,16 +21,15 @@ languages = [
     'French'
 ]
 
-columnsTitles = ['num_a', 
-                 'num_sch',
-                 'num_3vowels'
+columnsTitles = ['num_a', 'num_b', 'num_c', 'num_ç', 'num_d', 'num_e', 'num_f', 'num_g', 'num_h', 'num_i', 'num_j', 'num_k', 'num_l', 'num_m', 'num_n', 'num_ñ', 'num_o', 'num_p', 'num_q', 'num_r', 'num_s', 'num_t', 'num_u', 'num_v', 'num_w', 'num_x', 'num_y', 'num_z', 
+                'num_sch', 'num_ch', 'num_sh', 'num_gn', 'num_esszett', 'num_ssh', 'num_ix', 'num_ll', 
+                'num_triple_vowels', 'num_consonants', 'num_triple_vowels', 'num_triple_consonants', 'num_capital'
                  ]
 
-def countTripleVowels(text):
-    vowels = 'aeiouAEIOU'
+def countTripleLetters(text, letters):
     count = 0
     for i in range(len(text) - 2):
-        if text[i] in vowels and text[i+1] in vowels and text[i+2] in vowels:
+        if text[i] in letters and text[i+1] in letters and text[i+2] in letters:
             count += 1
     return count
 
@@ -78,17 +79,15 @@ for language in languages:
             num_ix = line.lower().count('ix')
             num_ll = line.lower().count('ll')
 
-
-            #repetir con dem�s conjuntos de letras
             num_vowels = num_a + num_e + num_i + num_o + num_u
-            num_consonants = num_b + num_c
-            num_triple_vowels = countTripleVowels(line)
-            #reptir con consonantes
-            #etc
+            num_consonants = num_b + num_c + num_d + num_f + num_g + num_h + num_j + num_k + num_l + num_m + num_n + num_p + num_q + num_r + num_s + num_t + num_v + num_w + num_x + num_y + num_z
+            num_triple_vowels = countTripleLetters(line.lower(), 'aeiou')
+            num_triple_consonants = countTripleLetters(line.lower(), 'bcdfghjklmnpqrstvwxyz')
+            num_capital = len(list(filter(lambda char: char.isupper(), line)))
 
-            line_feat_list = [num_a,
-                              num_sch,
-                              num_triple_vowels
+            line_feat_list = [num_a, num_b, num_c, num_ç, num_d, num_e, num_f, num_g, num_h, num_i, num_j, num_k, num_l, num_m, num_n, num_ñ, num_o, num_p, num_q, num_r, num_s, num_t, num_u, num_v, num_w, num_x, num_y, num_z, 
+                              num_sch, num_ch, num_sh, num_gn, num_esszett, num_ssh, num_ix, num_ll,
+                              num_triple_vowels, num_consonants, num_triple_vowels, num_triple_consonants, num_capital
                                 ]
             all_obs_feat_list.append(line_feat_list)
 
