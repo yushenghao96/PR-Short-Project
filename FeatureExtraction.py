@@ -9,7 +9,7 @@ import os
 extractedText_folder = 'ExtractedText/'
 extractedFeatures_folder = 'ExtractedFeatures/'
 
-script_name = 'Phrase_extractor.py'
+script_name = 'FeatureExtraction.py'
 file_directory = __file__.replace(script_name, '')
 
 languages = [
