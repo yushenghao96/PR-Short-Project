@@ -105,6 +105,7 @@ for language in languages:
             num_triple_vowels = countTripleLetters(line.lower(), 'aeiouàáâäéèêëìíîïòóôöùúûüœ')
             num_triple_consonants = countTripleLetters(line.lower(), 'bcdfghjklmnpqrstvwxyz')
             num_capital = len(list(filter(lambda char: char.isupper(), line)))
+            max_length_word = max(filter(lambda))
 
             line_feat_list = [num_a, num_b, num_c, num_ç, num_d, num_e, num_f, num_g, num_h, num_i, num_j, num_k, num_l, num_m, num_n, num_ñ, num_o, num_p, num_q, num_r, num_s, num_t, num_u, num_v, num_w, num_x, num_y, num_z, 
                               num_sch, num_ch, num_sh, num_gn, num_esszett, num_ssh, num_ix, num_ll,
