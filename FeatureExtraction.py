@@ -116,22 +116,6 @@ for language in languages:
                 mean_length_words = statistics.mean(map(len, line.split()))
                 ratio_vowels_consonants = vowel_count / consonat_count
                 mean_vowel_per_word = vowel_count/len(line)
-
-                # Creation of array with column values
-                line_feat_list = [value for value in line_letter_counts.values()]
-                line_feat_list.append(vowel_count)
-                line_feat_list.append(consonat_count)
-                line_feat_list.append(num_triple_vowels)
-                line_feat_list.append(num_triple_consonants)
-                line_feat_list.append(num_capital)
-                line_feat_list.append(max_length_word)
-                line_feat_list.append(mean_length_words)
-                line_feat_list.append(diacritic_count)
-                line_feat_list.append(ratio_vowels_consonants)
-                line_feat_list.append(mean_vowel_per_word)
-                line_feat_list.append(line)
-                all_obs_feat_list.append(line_feat_list)
-
             except Exception as error:
                 print("Error in line number: " + str(line_number))
                 print("The line error is: " + line)
@@ -140,7 +124,22 @@ for language in languages:
                 error_list.append(line_error)
 
                 continue
-        
+
+            # Creation of array with column values
+            line_feat_list = [value for value in line_letter_counts.values()]
+            line_feat_list.append(vowel_count)
+            line_feat_list.append(consonat_count)
+            line_feat_list.append(num_triple_vowels)
+            line_feat_list.append(num_triple_consonants)
+            line_feat_list.append(num_capital)
+            line_feat_list.append(max_length_word)
+            line_feat_list.append(mean_length_words)
+            line_feat_list.append(diacritic_count)
+            line_feat_list.append(ratio_vowels_consonants)
+            line_feat_list.append(mean_vowel_per_word)
+            line_feat_list.append(line)
+            all_obs_feat_list.append(line_feat_list)
+            
             #Sum the values of line dict to summatory dict           
             for key in line_letter_counts.keys():
                 summatory_letter_counts[key] += line_letter_counts[key]
