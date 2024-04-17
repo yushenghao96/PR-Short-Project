@@ -46,11 +46,14 @@ def countTripleLetters(text, letters):
 
 def shannon_entropy(num_vocals,num_consonants,summatory_letter_counts):
 
+    probabilities = {}
     # Probability of each character
     total_chars = num_vocals + num_consonants
     # Accesss all items except 5 last ones
-    probabilities = {char: count / total_chars for letter, count in list(summatory_letter_counts.items())[:-5]}
-    
+
+    for letter,count in summatory_letter_counts.items():
+        probabilities[letter] = count /total_chars
+
     #Calculate entropy
     entropy = 0 
     for prob in probabilities.values():
@@ -118,9 +121,11 @@ for language in languages:
                 mean_vowel_per_word = vowel_count/len(line)
                 
             except Exception as error:
-                print("Error in line number: " + str(line_number))
-                print("The line error is: " + line)
-                print("Error: " + str(error))
+                if __debug__:
+                    print("Error in line number: " + str(line_number))
+                    print("The line error is: " + line)
+                    print("Error: " + str(error))
+                    
                 line_error = [line_number, language, line, str(error)]
                 error_list.append(line_error)
 
