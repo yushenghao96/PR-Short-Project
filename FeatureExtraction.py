@@ -5,6 +5,7 @@ import os
 import math
 import shutil
 import statistics
+import traceback
 
 # directories and file name
 extractedText_folder = 'ExtractedText/'
@@ -33,7 +34,7 @@ languages = [
 
 columnsTitles = ['num_a', 'num_b', 'num_c', 'num_ç', 'num_d', 'num_e', 'num_f', 'num_g', 'num_h', 'num_i', 'num_j', 'num_k', 'num_l', 'num_m', 'num_n', 'num_ñ', 'num_o', 'num_p', 'num_q', 'num_r', 'num_s', 'num_t', 'num_u', 'num_v', 'num_w', 'num_x', 'num_y', 'num_z', 
                 'num_sch', 'num_ch', 'num_sh', 'num_gn', 'num_esszett', 'num_ssh', 'num_ix', 'num_ll', 'num_œ', 'num_à', 'num_á', 'num_â', 'num_ä', 'num_è', 'num_é', 'num_ê', 'num_ë', 'num_ì', 'num_í', 'num_î', 'num_ï', 'num_ò', 'num_ó', 'num_ô', 'num_ö', 'num_ù', 'num_ú', 'num_û', 'num_ü',
-                 'num_consonants', 'num_vowels','num_triple_vowels','num_triple_consonants', 'num_capital','max_length_word', 'mean_length_words',
+                 'num_consonants', 'num_vowels','num_triple_vowels','num_triple_consonants', 'num_capital','max_length_word', 'mean_length_words', 'diacritic_count', 'ratio_vowels_consonants', 'mean_vowel_per_word', 'phrase',
                  ]
 
 def countTripleLetters(text, letters):
@@ -59,9 +60,15 @@ def shannon_entropy(num_vocals,num_consonants,summatory_letter_counts):
     return entropy
 
 
+
+# Parameters to track errors
+error_list = []
+line_number = -1
+error_columns = ['line number', 'language', 'line', 'error'] # error columns
+
 for language in languages:
     if not os.path.exists(file_directory + extractedFeatures_folder + language + '.csv'):
-        with open(file_directory + extractedText_folder + language + '.txt', 'r') as file:
+        with open(file_directory + extractedText_folder + language + '.txt', 'r', encoding='UTF-8') as file:
             lines = file.readlines()
 
         all_obs_feat_list = []
@@ -83,28 +90,43 @@ for language in languages:
         }
 
         vowels = {'a', 'e', 'i', 'o', 'u','à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ò', 'ó', 'ô', 'ö', 'ù', 'ú', 'û', 'ü'}
-        
+        diacritics = {'à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ò', 'ó', 'ô', 'ö', 'ù', 'ú', 'û', 'ü'}
+
         for line in lines:
+            line_number+=1
 
             # Lowercase each line 
             line_lower = line.lower()
-            
+        
             # Iterate through each character 
             for char in line_letter_counts:
                 num_char = line_lower.count(char)
                 line_letter_counts[char] += num_char
+            
+            try:
+                # Count vowels and consonants
+                vowel_count = sum(line_letter_counts[vowel] for vowel in vowels)
+                consonat_count = sum(line_letter_counts[letter] for letter in line_letter_counts) - vowel_count
+                diacritic_count = sum(line_letter_counts[diacritic] for diacritic in diacritics)
 
-            # Count vowels and consonants
-            vowel_count = sum(line_letter_counts[vowel] for vowel in vowels)
-            consonat_count = sum(line_letter_counts[letter] for letter in line_letter_counts) - vowel_count
+                num_triple_vowels = countTripleLetters(line.lower(), 'aeiouàáâäéèêëìíîïòóôöùúûüœ')
+                num_triple_consonants = countTripleLetters(line.lower(), 'bcdfghjklmnpqrstvwxyz')
+                num_capital = len(list(filter(lambda char: char.isupper(), line)))
+                max_length_word = max(map(len, line.split()))
+                mean_length_words = statistics.mean(map(len, line.split()))
+                ratio_vowels_consonants = vowel_count / consonat_count
+                mean_vowel_per_word = vowel_count/len(line)
+                
+            except Exception as error:
+                print("Error in line number: " + str(line_number))
+                print("The line error is: " + line)
+                print("Error: " + str(error))
+                line_error = [line_number, language, line, str(error)]
+                error_list.append(line_error)
 
-            num_triple_vowels = countTripleLetters(line.lower(), 'aeiouàáâäéèêëìíîïòóôöùúûüœ')
-            num_triple_consonants = countTripleLetters(line.lower(), 'bcdfghjklmnpqrstvwxyz')
-            num_capital = len(list(filter(lambda char: char.isupper(), line)))
-            max_length_word = max(map(len, line.split()))
-            mean_length_words = statistics.mean(map(len, line.split()))
+                continue
 
-           #Creation of array with column values
+            # Creation of array with column values
             line_feat_list = [value for value in line_letter_counts.values()]
             line_feat_list.append(vowel_count)
             line_feat_list.append(consonat_count)
@@ -113,8 +135,12 @@ for language in languages:
             line_feat_list.append(num_capital)
             line_feat_list.append(max_length_word)
             line_feat_list.append(mean_length_words)
+            line_feat_list.append(diacritic_count)
+            line_feat_list.append(ratio_vowels_consonants)
+            line_feat_list.append(mean_vowel_per_word)
+            line_feat_list.append(line)
             all_obs_feat_list.append(line_feat_list)
-            
+
             #Sum the values of line dict to summatory dict           
             for key in line_letter_counts.keys():
                 summatory_letter_counts[key] += line_letter_counts[key]
@@ -140,3 +166,7 @@ for language in languages:
 
         df = pd.DataFrame(all_obs_feat_list, columns = columnsTitles)
         df.to_csv(file_directory + extractedFeatures_folder + language + '.csv', sep=';', encoding='utf-8')
+
+# Saving errors
+df = pd.DataFrame(error_list, columns = error_columns)
+df.to_csv(file_directory + extractedFeatures_folder + "Errors" + '.csv', sep=';', encoding='utf-8')
