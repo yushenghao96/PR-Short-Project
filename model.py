@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import os
 import csv
+from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn import decomposition
 import matplotlib.pyplot as plt
@@ -58,6 +59,9 @@ Xproj = pca.transform(XS) #project data to PCA space
 Xreduced = Xproj[:,0:10] #keep first PC components
 print(Xreduced)
 
+kmeans_labels = KMeans(n_clusters=4).fit_predict(Xproj[:,0:3]) 
+
+
 dfpca_3d = pd.DataFrame(Xproj[:, 0:3], columns=['PCA1', 'PCA2', 'PCA3'])
 
 # Initialize a 3D figure
@@ -78,5 +82,17 @@ ax.set_title('3D PCA')
 
 # Add legend
 ax.legend()
+
+plt.show()
+
+
+fig = plt.figure(figsize=(10, 10))
+ax = fig.add_subplot(111, projection='3d')
+
+ax.scatter(Xproj[:, 0], Xproj[:, 1], Xproj[:, 2], c=kmeans_labels)  # Plotting in 3D
+ax.set_title("k-means clustering (k=4) in 3D")
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
 
 plt.show()
