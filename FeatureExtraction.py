@@ -143,7 +143,7 @@ for language in languages:
             line_feat_list.append(diacritic_count)
             line_feat_list.append(ratio_vowels_consonants)
             line_feat_list.append(mean_vowel_per_word)
-            line_feat_list.append(line)
+            line_feat_list.append(line.replace(';', '|').replace('\n',""))
             all_obs_feat_list.append(line_feat_list)
 
             #Sum the values of line dict to summatory dict           
