@@ -28,8 +28,10 @@ os.makedirs(file_directory + extractedFeatures_folder, exist_ok=True)
 languages = [
     'Spanish',
     'English',
-    'German',
-    'French'
+    'German1',
+    'German2',
+    'French1',
+    'French2'
 ]
 
 columnsTitles = ['num_a', 'num_b', 'num_c', 'num_ç', 'num_d', 'num_e', 'num_f', 'num_g', 'num_h', 'num_i', 'num_j', 'num_k', 'num_l', 'num_m', 'num_n', 'num_ñ', 'num_o', 'num_p', 'num_q', 'num_r', 'num_s', 'num_t', 'num_u', 'num_v', 'num_w', 'num_x', 'num_y', 'num_z', 
