@@ -21,6 +21,11 @@ model_filename = "./Trained_model.sav"
 cv_filename = "./cv.sav"
 le_filename = "./le.sav"
 
+def disable_arrow_keys(event):
+    if event.keysym in ("Up", "Down", "Left", "Right"):
+        return "break"  # Prevent default behavior
+
+
 
 class GUI(tk.Tk):
     def __init__(self):
@@ -40,7 +45,6 @@ class GUI(tk.Tk):
         
         #Create languages list
         for i in range(n_languages):
-            print(i)
             lan = self.loaded_le.inverse_transform([i])
             languages.append(lan[0])
 
@@ -74,8 +78,22 @@ class GUI(tk.Tk):
         '''
         self.text_box = ttk.Entry(upper_frame)
         self.text_box.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        self.text_box.bind("<Left>", disable_arrow_keys)
+        self.text_box.bind("<Right>", disable_arrow_keys)
+        self.text_box.bind("<Up>", disable_arrow_keys)
+        self.text_box.bind("<Down>", disable_arrow_keys)
+
+        self.bind("<Button-1>", self.on_click)
+
+
+
+
+
+
+
         self.text_box.bind("<KeyRelease>", self.calculate_model)
-        
+                     
         
         self.fig, self.ax = plt.subplots(figsize=(7,5)) #Adjust plot size 
         self.plot_canvas = FigureCanvasTkAgg(self.fig, master=right_frame)
@@ -93,6 +111,14 @@ class GUI(tk.Tk):
         
         self.calculate_model()
         self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_click(self, event):
+        # Check if the click occurred within the Entry widget
+        widget = event.widget
+        if isinstance(widget, tk.Entry) and widget == self.text_box:
+            # Set cursor position to the end of text
+            self.text_box.icursor(tk.END)
+
     
     def update_plot(self,text,probabilistic_list, event=None):
         # Clear previous plot
@@ -133,28 +159,25 @@ class GUI(tk.Tk):
         text = self.text_box.get()
         
         if text == self.previousText:
-            return   
+            return
         
-        self.previousText = text
+        elif len(text) < len(self.previousText):
+            self.kalman_filter.removeLastProb()
+        
+        else:
+            x = self.loaded_cv.transform([text]).toarray()
+            lang = self.loaded_model.predict(x)
+            lang_string = self.loaded_le.inverse_transform(lang)
 
-        x = self.loaded_cv.transform([text]).toarray()
-        lang = self.loaded_model.predict(x)
-        lang_string = self.loaded_le.inverse_transform(lang)
+            index_language = languages.index(lang_string[0])
+            observation = [0] * len(languages)
+            observation[index_language] = 1
 
-        index_language = languages.index(lang_string[0])
-        observation = [0] * len(languages)
-        observation[index_language] = 1
+            self.kalman_filter.update(observation=observation) 
 
-
-        self.kalman_filter.update(observation=observation) 
         current_language_probabilities = self.kalman_filter.state
-        
-        #################################
-        #Use model to obtain percentages for each class (temporarly random number)
-        rnd_number = [random.random() for i in range(3)]
-        last_number = 1- sum(rnd_number)
-        rnd_number.append(last_number)
-        #################################
+
+        self.previousText = text
 
         self.update_plot(text,current_language_probabilities)
 
