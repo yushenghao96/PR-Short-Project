@@ -14,8 +14,10 @@ file_directory = __file__.replace(script_name, '')
 books = {
     'Spanish': 'J.R.R. Tolkien La Comunidad del anillo I.pdf',
     'English': 'harry-potter-book-collection-1-4.pdf',
-    'German': 'karl-marx-das-kapital-buch-1.pdf',
-    'French': 'Verne-Voyage_au_centre_de_la_Terre.pdf',
+    'German1': 'karl-marx-das-kapital-buch-1.pdf',
+    'German2': 'Schloss, Das - Franz Kafka.pdf',
+    'French1': 'Verne-Voyage_au_centre_de_la_Terre.pdf',
+    'French2': 'Vol De Nuit - Antoine de Saint-Exupéry - PDF.pdf'
 }
 
 # Text cleaning
