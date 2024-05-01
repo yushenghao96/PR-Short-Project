@@ -6,6 +6,7 @@ from tkinter import ttk
 from tkinter import scrolledtext
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
+import kalman
 
 #List and dict(obtain them from other file separated in the future)
 
@@ -117,6 +118,11 @@ class GUI(tk.Tk):
         
         self.previousText = text
 
+        kalman_filter = kalman.KalmanFilter()
+#####   observation = model_output
+        kalman_filter.update(observation=observation) 
+        current_language_probabilities = kalman_filter.state
+        
         #################################
         #Use model to obtain percentages for each class (temporarly random number)
         rnd_number = [random.random() for i in range(3)]
