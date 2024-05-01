@@ -1,15 +1,15 @@
 import numpy as np
 
 class KalmanFilter:
-    def __init__(self):
-        #Constructor
-        self.state = np.array([0.25, 0.25, 0.25, 0.25])  # Assuming equal probability for each language
-        self.covariance = np.eye(4) * 0.01  # Assuming small uncertainty
-        self.transition_matrix = np.eye(4)
-        self.observation_matrix = np.eye(4)
-        self.process_noise_covariance = np.eye(4) * 0.001
-        self.observation_noise_covariance = np.eye(4) * 0.001    
-        
+    def __init__(self, n_languages):
+        self.state = np.array([1/n_languages] * n_languages)  # Assuming equal probability for each language
+        self.covariance = np.eye(n_languages) * 0.01  # Assuming small uncertainty
+        self.transition_matrix = np.eye(n_languages)
+        self.observation_matrix = np.eye(n_languages)
+        self.process_noise_covariance = np.eye(n_languages) * 0.001
+        self.observation_noise_covariance = np.eye(n_languages) * 0.001
+        self.n_languages = n_languages
+
     def predict(self):
         self.state = np.dot(self.transition_matrix, self.state)
         self.covariance = np.dot(np.dot(self.transition_matrix, self.covariance), self.transition_matrix.T) + self.process_noise_covariance
@@ -39,17 +39,20 @@ observation_noise_covariance = np.eye(4) * 0.001
 
 
 # Initialize Kalman filter
-kalman_filter = KalmanFilter(initial_state, initial_covariance, transition_matrix, observation_matrix, process_noise_covariance, observation_noise_covariance)
+kalman_filter = KalmanFilter(initial_state,initial_covariance, transition_matrix, observation_matrix, process_noise_covariance, observation_noise_covariance)
 
 # Example observation for English language
 observation = np.array([1, 0, 0, 0])  # English
+# # Initialize Kalman filter
+# kalman_filter = KalmanFilter(initial_state, initial_covariance, transition_matrix, observation_matrix, process_noise_covariance, observation_noise_covariance)
 
-# Update the Kalman filter with the observation
-kalman_filter.update(observation)
+# # Example observation for English language
+# observation = np.array([0, 1, 0, 0])  # English
 
-# After update, you can get the current state (language probabilities)
-current_language_probabilities = kalman_filter.state
+# # Update the Kalman filter with the observation
+# kalman_filter.update(observation)
 
-# Print the current language probabilities
-print("Current Language Probabilities:", current_language_probabilities)
-"""
+# # After update, you can get the current state (language probabilities)
+# current_language_probabilities = kalman_filter.state
+
+
