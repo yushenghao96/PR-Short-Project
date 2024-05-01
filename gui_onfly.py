@@ -7,15 +7,19 @@ from tkinter import scrolledtext
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import kalman
+import pickle
+
 
 #List and dict(obtain them from other file separated in the future)
 
 languages = [
-    'Spanish',
-    'English',
-    'German',
-    'French'
 ]
+
+n_languages = 4
+
+model_filename = "./Trained_model.sav"
+cv_filename = "./cv.sav"
+le_filename = "./le.sav"
 
 
 class GUI(tk.Tk):
@@ -26,6 +30,21 @@ class GUI(tk.Tk):
         self.flag = tk.BooleanVar()
         self.flag.set(False)
         self.geometry("900x600")
+
+        #Initialize model and kalman
+        
+
+        self.loaded_model = pickle.load(open(model_filename,'rb'))
+        self.loaded_cv = pickle.load(open(cv_filename,'rb'))
+        self.loaded_le = pickle.load(open(le_filename,'rb'))
+        
+        #Create languages list
+        for i in range(n_languages):
+            print(i)
+            lan = self.loaded_le.inverse_transform([i])
+            languages.append(lan[0])
+
+        self.kalman_filter = kalman.KalmanFilter(n_languages=n_languages)
 
         #Variables of class GUI
         self.previousText=""
@@ -92,19 +111,19 @@ class GUI(tk.Tk):
         sorted_assoc = sorted(lan_dict.items(), key=lambda x: x[1], reverse=True)
 
         # Plot based on putuation of languages
-        if text.isdigit() and int(text) > 0:
-            self.flag.set(True)
-            self.ax.bar([x[0] for x in sorted_assoc[:4]], [x[1] for x in sorted_assoc[:4]])
-            self.ax.set_xlabel('Values')
-            self.ax.set_ylabel('Random Numbers')
-            self.ax.set_title('Language example output')
-            self.letters_count.delete(1.0, tk.END)
-            self.letters_count.insert(tk.END, "Random numbers generated:\n")
-            for idx, rnd in enumerate(sorted_assoc):
-                self.letters_count.insert(tk.END, f"{rnd[0]}: {rnd[1]:.2f}\n")
+        
+        #self.flag.set(True)
+        self.ax.bar([x[0] for x in sorted_assoc[:4]], [x[1] for x in sorted_assoc[:4]])
+        self.ax.set_xlabel('Values')
+        self.ax.set_ylabel('Random Numbers')
+        self.ax.set_title('Language example output')
+        self.letters_count.delete(1.0, tk.END)
+        self.letters_count.insert(tk.END, "Random numbers generated:\n")
+        for idx, rnd in enumerate(sorted_assoc):
+            self.letters_count.insert(tk.END, f"{rnd[0]}: {rnd[1]:.2f}\n")
             
-        else:
-            self.flag.set(False)
+        #else:
+        #    self.flag.set(False)
         
         # Redraw canvas
         self.plot_canvas.draw()
@@ -118,10 +137,17 @@ class GUI(tk.Tk):
         
         self.previousText = text
 
-        kalman_filter = kalman.KalmanFilter()
-#####   observation = model_output
-        kalman_filter.update(observation=observation) 
-        current_language_probabilities = kalman_filter.state
+        x = self.loaded_cv.transform([text]).toarray()
+        lang = self.loaded_model.predict(x)
+        lang_string = self.loaded_le.inverse_transform(lang)
+
+        index_language = languages.index(lang_string[0])
+        observation = [0] * len(languages)
+        observation[index_language] = 1
+
+
+        self.kalman_filter.update(observation=observation) 
+        current_language_probabilities = self.kalman_filter.state
         
         #################################
         #Use model to obtain percentages for each class (temporarly random number)
@@ -130,7 +156,7 @@ class GUI(tk.Tk):
         rnd_number.append(last_number)
         #################################
 
-        self.update_plot(text,rnd_number)
+        self.update_plot(text,current_language_probabilities)
 
     def on_close(self):
         self.destroy()
