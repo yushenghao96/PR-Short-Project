@@ -55,4 +55,3 @@ observation = np.array([1, 0, 0, 0])  # English
 # # After update, you can get the current state (language probabilities)
 # current_language_probabilities = kalman_filter.state
 
-
