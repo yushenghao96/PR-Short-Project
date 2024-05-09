@@ -85,6 +85,11 @@ class GUI(tk.Tk):
         self.text_box.insert(0,'Enter your text here...')
         self.text_box.config(foreground='grey')  # Set text color to grey
         self.text_box.bind("<KeyRelease>", self.calculate_model)
+        #self.text_box.bind("<KeyPress>", self.calculate_model)
+        #self.text_box.bind("<Key>", self.calculate_model)
+
+
+
         #self.text_box.bind("<FocusOut>", self.on_focus_out(self.text_box))
         self.text_box.bind("<FocusIn>",self.on_entry_click)       
 
@@ -93,7 +98,7 @@ class GUI(tk.Tk):
         self.text_box.bind("<Up>", disable_arrow_keys)
         self.text_box.bind("<Down>", disable_arrow_keys)
 
-        self.text_box.bind("<Button-1>", self.on_click)
+        self.bind("<Button-1>", self.on_click)
                      
         
         self.fig, self.ax = plt.subplots(figsize=(7,5)) #Adjust plot size 
@@ -176,23 +181,32 @@ class GUI(tk.Tk):
         if text == self.previousText:
             return
         
-        elif len(text) < len(self.previousText):
-            self.kalman_filter.removeLastProb()
+
+        elif (len(text) < len(self.previousText)):
+            repetitionsRemove = len(self.previousText) - len(text)
+            for i in range(repetitionsRemove):
+                self.kalman_filter.removeLastProb()
         
         else:
-            x = self.loaded_cv.transform([text]).toarray()
-            lang = self.loaded_model.predict(x)
-            lang_string = self.loaded_le.inverse_transform(lang)
+            if (self.previousText != 'Enter your text here...') and (text!='Enter your text here...'):
+                repetitions = len(text) - len(self.previousText)
+                for i in range(repetitions):
+                    x = self.loaded_cv.transform([text[0:len(text)+i-repetitions+1]]).toarray()
+                    lang = self.loaded_model.predict(x)
+                    lang_string = self.loaded_le.inverse_transform(lang)
 
-            index_language = languages.index(lang_string[0])
-            observation = [0] * len(languages)
-            observation[index_language] = 1
+                    index_language = languages.index(lang_string[0])
+                    observation = [0] * len(languages)
+                    observation[index_language] = 1
 
-            self.kalman_filter.update(observation=observation) 
+                    self.kalman_filter.update(observation=observation) 
 
         current_language_probabilities = self.kalman_filter.state
 
-        self.previousText = text
+        if text!='Enter your text here...':
+            self.previousText = text
+        else:
+            self.previousText = ""
 
         self.update_plot(text,current_language_probabilities)
 

@@ -28,8 +28,8 @@ class KalmanFilter:
         self.cov_history.append(self.covariance.tolist())
 
     def removeLastProb(self):
-        self.prob_history = np.delete(self.prob_history, -1, 0)
-        self.cov_history = np.delete(self.cov_history, -1, 0)
+        self.prob_history = np.delete(self.prob_history, -1, 0).tolist()
+        self.cov_history = np.delete(self.cov_history, -1, 0).tolist()
         if len(self.prob_history) == 0:
             self.state = np.array([1/self.n_languages] * self.n_languages)
             self.covariance = np.eye(self.n_languages) * 0.01
