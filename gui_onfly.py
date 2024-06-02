@@ -77,7 +77,7 @@ class GUI(tk.Tk):
         self.text_box.config(foreground='grey')  # Set text color to grey
         self.text_box.bind("<KeyRelease>", self.calculate_model)
 
-        # Disable arrow keys and other inputs
+        # Disable arrow keys and other configurations
         self.text_box.bind("<FocusIn>",self.on_entry_click)       
         self.text_box.bind("<Left>", disable_arrow_keys)
         self.text_box.bind("<Right>", disable_arrow_keys)
@@ -85,20 +85,20 @@ class GUI(tk.Tk):
         self.text_box.bind("<Down>", disable_arrow_keys)
         self.bind("<Button-1>", self.on_click)
         
-        
+        # Adjust size
         self.fig, self.ax = plt.subplots(figsize=(7,5)) #Adjust plot size 
         self.plot_canvas = FigureCanvasTkAgg(self.fig, master=right_frame)
         self.plot_canvas.get_tk_widget().pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
-        #Mid widget
+        # Mid widget
         self.finalPrediction = tk.Entry(mid_left_frame,state='readonly')
         self.finalPrediction.pack(padx=10,pady=10,fill=tk.BOTH,expand=True)
 
-        #Test widgets in botton part
+        # Test widgets in botton part
         self.letters_count = tk.Text(bottom_frame)
         self.letters_count.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
 
-        #Make frames resizable
+        # Make frames resizable
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -116,6 +116,7 @@ class GUI(tk.Tk):
 
     
     def on_entry_click(self,event=None):
+        # on entry click, actions
         entry = self.text_box
         if entry.get() == 'Enter your text here...':
             entry.delete(0, tk.END)
@@ -161,12 +162,12 @@ class GUI(tk.Tk):
     
     def calculate_model(self,event=None):
         # Get the text from the text box & check is not the same as before
+        # If there are letters deleted, deletes also the probabilities from the kalman filter list of parameters
         text = self.text_box.get()
         
         if text == self.previousText:
             return
         
-
         elif (len(text) < len(self.previousText)):
             repetitionsRemove = len(self.previousText) - len(text)
             for i in range(repetitionsRemove):
