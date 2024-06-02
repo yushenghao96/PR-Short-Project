@@ -51,12 +51,10 @@ class GUI(tk.Tk):
         # Initialize kalman filter with number of languages
         self.kalman_filter = kalman.KalmanFilter(n_languages=n_languages)
 
-        #Variables of class GUI
+        # Variables of class GUI
         self.previousText=""
 
         # Create frames for subdividing window
-
-
         left_frame = tk.Frame(self)
         left_frame.grid(row=0, column=0, sticky="nsew")
 
@@ -72,35 +70,21 @@ class GUI(tk.Tk):
         right_frame = tk.Frame(self)
         right_frame.grid(row=0, column=1, sticky="nsew")
 
-        #Creation of widgets for each subwindow
-        '''
-        self.text_box = scrolledtext.ScrolledText(left_frame,wrap=tk.WORD, 
-                                      width=40, height=8, 
-                                      font=("Times New Roman", 15)) 
-        #self.text_box.grid(column=0, row=2, pady=10, padx=10) 
-        self.text_box.focus()
-        '''
-        #Text Box widget
+        # Text Box widget
         self.text_box = ttk.Entry(upper_frame)
         self.text_box.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         self.text_box.insert(0,'Enter your text here...')
         self.text_box.config(foreground='grey')  # Set text color to grey
         self.text_box.bind("<KeyRelease>", self.calculate_model)
-        #self.text_box.bind("<KeyPress>", self.calculate_model)
-        #self.text_box.bind("<Key>", self.calculate_model)
 
-
-
-        #self.text_box.bind("<FocusOut>", self.on_focus_out(self.text_box))
+        # Disable arrow keys and other inputs
         self.text_box.bind("<FocusIn>",self.on_entry_click)       
-
         self.text_box.bind("<Left>", disable_arrow_keys)
         self.text_box.bind("<Right>", disable_arrow_keys)
         self.text_box.bind("<Up>", disable_arrow_keys)
         self.text_box.bind("<Down>", disable_arrow_keys)
-
         self.bind("<Button-1>", self.on_click)
-                     
+        
         
         self.fig, self.ax = plt.subplots(figsize=(7,5)) #Adjust plot size 
         self.plot_canvas = FigureCanvasTkAgg(self.fig, master=right_frame)
