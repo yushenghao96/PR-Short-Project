@@ -10,17 +10,19 @@ import kalman
 import pickle
 
 
-#List and dict(obtain them from other file separated in the future)
+# Init
+languages = [] # initialize the variable to save the probabilities of each language
+color_map = {'German': 'red', 'English': 'green', 'Spanish': 'blue', 'French': 'yellow'} # assign the color bar to show in the GUI
 
-languages = []
-color_map = {'German': 'red', 'English': 'green', 'Spanish': 'blue', 'French': 'yellow'}
+# number of total languages
+n_languages = 4 
 
-n_languages = 4
-
+# Path to the files of the trained prediction model
 model_filename = "./Trained_model.sav"
 cv_filename = "./cv.sav"
 le_filename = "./le.sav"
 
+# function to prevent the user from using the arrow keys
 def disable_arrow_keys(event):
     if event.keysym in ("Up", "Down", "Left", "Right"):
         return "break"  # Prevent default behavior
@@ -36,9 +38,7 @@ class GUI(tk.Tk):
         self.flag.set(False)
         self.geometry("900x600")
 
-        #Initialize model and kalman
-        
-
+        #Initialize model, loads the trained prediction model
         self.loaded_model = pickle.load(open(model_filename,'rb'))
         self.loaded_cv = pickle.load(open(cv_filename,'rb'))
         self.loaded_le = pickle.load(open(le_filename,'rb'))
@@ -48,6 +48,7 @@ class GUI(tk.Tk):
             lan = self.loaded_le.inverse_transform([i])
             languages.append(lan[0])
 
+        # Initialize kalman filter with number of languages
         self.kalman_filter = kalman.KalmanFilter(n_languages=n_languages)
 
         #Variables of class GUI
