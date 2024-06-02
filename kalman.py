@@ -7,7 +7,7 @@ class KalmanFilter:
         self.transition_matrix = np.eye(n_languages)
         self.observation_matrix = np.eye(n_languages)
         self.process_noise_covariance = np.eye(n_languages) * 0.001
-        self.observation_noise_covariance = np.eye(n_languages) * 0.001
+        self.observation_noise_covariance = np.eye(n_languages) * 0.0008
         self.n_languages = n_languages
         self.prob_history = []
         self.cov_history = []
