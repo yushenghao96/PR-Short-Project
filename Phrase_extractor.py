@@ -10,7 +10,7 @@ extractedText_folder = 'ExtractedText/'
 script_name = 'Phrase_extractor.py'
 file_directory = __file__.replace(script_name, '')
 
-
+# assign language and book names
 books = {
     'Spanish': 'J.R.R. Tolkien La Comunidad del anillo I.pdf',
     'English': 'harry-potter-book-collection-1-4.pdf',
@@ -25,9 +25,6 @@ unwanted_charaters = ['\n', '-', 'El Señor de los anillos: La Comunidad del ani
 number_spaces = 3 # number of repeated spaces to delete in the text
 
 # CSV parameters
-
-
-
 for book in books:
     if not os.path.exists(file_directory + extractedText_folder + book + '.txt'):
         #----------------------------------------------------------------------

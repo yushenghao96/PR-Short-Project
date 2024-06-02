@@ -25,6 +25,7 @@ else:
 
 os.makedirs(file_directory + extractedFeatures_folder, exist_ok=True)
 
+# languages available
 languages = [
     'Spanish',
     'English',
@@ -34,11 +35,13 @@ languages = [
     'French2'
 ]
 
+# columns of the csv
 columnsTitles = ['num_a', 'num_b', 'num_c', 'num_ç', 'num_d', 'num_e', 'num_f', 'num_g', 'num_h', 'num_i', 'num_j', 'num_k', 'num_l', 'num_m', 'num_n', 'num_ñ', 'num_o', 'num_p', 'num_q', 'num_r', 'num_s', 'num_t', 'num_u', 'num_v', 'num_w', 'num_x', 'num_y', 'num_z', 
                 'num_sch', 'num_ch', 'num_sh', 'num_gn', 'num_esszett', 'num_ssh', 'num_ix', 'num_ll', 'num_œ', 'num_à', 'num_á', 'num_â', 'num_ä', 'num_è', 'num_é', 'num_ê', 'num_ë', 'num_ì', 'num_í', 'num_î', 'num_ï', 'num_ò', 'num_ó', 'num_ô', 'num_ö', 'num_ù', 'num_ú', 'num_û', 'num_ü',
                  'num_consonants', 'num_vowels','num_triple_vowels','num_triple_consonants', 'num_capital','max_length_word', 'mean_length_words', 'diacritic_count', 'ratio_vowels_consonants', 'mean_vowel_per_word', 'phrase',
                  ]
 
+# function to count three continuous of the same letter
 def countTripleLetters(text, letters):
     count = 0
     for i in range(len(text) - 2):
@@ -46,6 +49,7 @@ def countTripleLetters(text, letters):
             count += 1
     return count
 
+# function to calcualte shanon entropy
 def shannon_entropy(num_vocals,num_consonants,summatory_letter_counts):
 
     probabilities = {}
@@ -65,7 +69,6 @@ def shannon_entropy(num_vocals,num_consonants,summatory_letter_counts):
     return entropy
 
 
-
 # Parameters to track errors
 error_list = []
 line_number = -1
@@ -76,6 +79,7 @@ for language in languages:
         with open(file_directory + extractedText_folder + language + '.txt', 'r', encoding='UTF-8') as file:
             lines = file.readlines()
 
+        # feature list and counters
         all_obs_feat_list = []
         summatory_letter_counts = {
         'a': 0, 'b': 0, 'c': 0, 'ç': 0, 'd': 0, 'e': 0, 'f': 0, 'g': 0, 'h': 0, 'i': 0,
@@ -94,6 +98,7 @@ for language in languages:
         'î': 0, 'ï': 0, 'ò': 0, 'ó': 0, 'ô': 0, 'ö': 0, 'ù': 0, 'ú': 0, 'û': 0, 'ü': 0
         }
 
+        # Letters list to extract features
         vowels = {'a', 'e', 'i', 'o', 'u','à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ò', 'ó', 'ô', 'ö', 'ù', 'ú', 'û', 'ü'}
         diacritics = {'à', 'á', 'â', 'ä', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ò', 'ó', 'ô', 'ö', 'ù', 'ú', 'û', 'ü'}
 
